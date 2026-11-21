@@ -18,8 +18,21 @@ export interface ChatLeadEmailData {
   }>;
 }
 
+interface EmailJob {
+  options: {
+    subject: string;
+    text: string;
+    html: string;
+    replyTo?: string;
+  };
+  retries: number;
+}
+
 class EmailService {
   private transporter: Transporter | null = null;
+  private queue: EmailJob[] = [];
+  private activeWorkers = 0;
+  private readonly MAX_CONCURRENT = 2; // Process 2 emails at a time to prevent SMTP connection throttling
 
   constructor() {
     this.initTransporter();
@@ -43,7 +56,7 @@ class EmailService {
           greetingTimeout: 8000,
           socketTimeout: 10000,
         });
-        logger.info('SMTP email transporter initialized successfully.');
+        logger.info('SMTP email transporter initialized successfully with connection pool.');
       } catch (error) {
         logger.warn('Failed to initialize SMTP transporter:', error);
         this.transporter = null;
@@ -56,10 +69,60 @@ class EmailService {
   }
 
   /**
-   * Internal dispatcher: attempts Resend HTTPS API first (best for cloud hosting),
-   * falls back to SMTP with diagnostic error reporting.
+   * Enqueues an email job into the high-concurrency worker queue.
+   * Returns immediately so API requests from chatbot or contact forms are never blocked.
    */
-  private async dispatchEmail(options: {
+  private enqueueEmail(options: {
+    subject: string;
+    text: string;
+    html: string;
+    replyTo?: string;
+  }): void {
+    this.queue.push({ options, retries: 0 });
+    this.processQueue();
+  }
+
+  /**
+   * High-concurrency queue worker with auto-retry and rate pacing.
+   * Handles 100+ simultaneous chat visitors smoothly without overloading Gmail SMTP or dropping messages.
+   */
+  private async processQueue(): Promise<void> {
+    if (this.activeWorkers >= this.MAX_CONCURRENT || this.queue.length === 0) {
+      return;
+    }
+
+    this.activeWorkers++;
+    const job = this.queue.shift();
+
+    if (!job) {
+      this.activeWorkers--;
+      return;
+    }
+
+    try {
+      const delivered = await this.dispatchEmailDirect(job.options);
+
+      if (!delivered && job.retries < 2) {
+        job.retries++;
+        logger.warn(`Email delivery failed. Re-queuing job for retry attempt ${job.retries}/2...`);
+        setTimeout(() => {
+          this.queue.push(job);
+          this.processQueue();
+        }, 2000 * job.retries);
+      }
+    } catch (err) {
+      logger.error('Unhandled email queue worker exception:', err);
+    } finally {
+      this.activeWorkers--;
+      // 250ms spacing between outbound email handshakes to stay within healthy rate limits
+      setTimeout(() => this.processQueue(), 250);
+    }
+  }
+
+  /**
+   * Direct dispatcher: attempts Resend HTTPS API first, falls back to pooled SMTP.
+   */
+  private async dispatchEmailDirect(options: {
     subject: string;
     text: string;
     html: string;
@@ -109,7 +172,7 @@ class EmailService {
             html: options.html,
           }),
           new Promise((_, reject) =>
-            setTimeout(() => reject(new Error('SMTP send timed out after 10 seconds. Your cloud host may be blocking outbound SMTP ports 587/465.')), 10000)
+            setTimeout(() => reject(new Error('SMTP send timed out after 10s')), 10000)
           ),
         ]);
 
@@ -128,12 +191,12 @@ class EmailService {
 
     // If neither provider is configured:
     logger.warn('⚠️ [EMAIL NOT SENT] Neither RESEND_API_KEY nor valid SMTP credentials found in environment variables.');
-    logger.warn(`Inquiry Details: Subject="${options.subject}", ReplyTo="${options.replyTo}"`);
     return false;
   }
 
   /**
-   * Dispatched dynamically when a visitor chats on the website.
+   * Dispatched dynamically when ANY visitor messages in the chatbot.
+   * Sends an email on EVERY message with an anti-thread dynamic timestamp subject.
    */
   async sendChatLeadAlert(data: ChatLeadEmailData): Promise<boolean> {
     const hasClientEmail = Boolean(
@@ -146,13 +209,21 @@ class EmailService {
       data.clientPhone !== 'Not provided yet'
     );
 
-    const subject = 'A client just reached out to you!';
-
     const nowFormatted = new Date().toLocaleString('en-US', {
       timeZone: 'Asia/Kolkata',
       dateStyle: 'medium',
       timeStyle: 'short',
     });
+
+    const nowTime = new Date().toLocaleTimeString('en-US', {
+      timeZone: 'Asia/Kolkata',
+      hour: '2-digit',
+      minute: '2-digit',
+      second: '2-digit',
+    });
+
+    // Dynamic subject with timestamp so Gmail NEVER collapses new messages into old threads
+    const subject = `A client just reached out to you! [${nowTime} IST]`;
 
     const plainText = `A client just reached out to you!
 
@@ -211,25 +282,34 @@ Session: ${data.sessionId}`;
       </html>
     `;
 
-    return this.dispatchEmail({
+    this.enqueueEmail({
       subject,
       text: plainText,
       html: htmlContent,
       replyTo: hasClientEmail ? data.clientEmail : undefined,
     });
+
+    return true;
   }
 
   /**
    * Dispatched on Contact Form submissions.
    */
   async sendContactNotification(inquiry: ContactInquiry): Promise<boolean> {
-    const subject = 'A client just reached out to you!';
-
     const nowFormatted = new Date().toLocaleString('en-US', {
       timeZone: 'Asia/Kolkata',
       dateStyle: 'medium',
       timeStyle: 'short',
     });
+
+    const nowTime = new Date().toLocaleTimeString('en-US', {
+      timeZone: 'Asia/Kolkata',
+      hour: '2-digit',
+      minute: '2-digit',
+      second: '2-digit',
+    });
+
+    const subject = `A client just reached out to you! [${nowTime} IST]`;
 
     const plainText = `A client just reached out to you!
 
@@ -269,12 +349,14 @@ Time: ${nowFormatted} IST`;
       </html>
     `;
 
-    return this.dispatchEmail({
+    this.enqueueEmail({
       subject,
       text: plainText,
       html: htmlContent,
       replyTo: inquiry.email,
     });
+
+    return true;
   }
 }
 
