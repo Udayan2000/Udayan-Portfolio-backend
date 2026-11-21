@@ -175,7 +175,7 @@ Session: ${data.sessionId}`;
 
 Client: ${inquiry.name}
 Email: ${inquiry.email}
-${inquiry.budget ? `Budget: ${inquiry.budget}\n` : ''}${inquiry.timeline ? `Timeline: ${inquiry.timeline}\n` : ''}${inquiry.service ? `Service: ${inquiry.service}\n` : ''}
+${inquiry.phone ? `Phone / WhatsApp: ${inquiry.phone}\n` : ''}${inquiry.service ? `Service Needed: ${inquiry.service}\n` : ''}${inquiry.budget ? `Budget: ${inquiry.budget}\n` : ''}${inquiry.timeline ? `Timeline: ${inquiry.timeline}\n` : ''}
 Message:
 ${inquiry.message}
 
@@ -192,12 +192,18 @@ Time: ${nowFormatted} IST`;
           <div style="font-size: 14px; line-height: 1.8; margin-bottom: 16px;">
             <div><strong>Client:</strong> ${escapeHtml(inquiry.name)}</div>
             <div><strong>Email:</strong> <a href="mailto:${inquiry.email}" style="color: #06b6d4; font-weight: 600;">${inquiry.email}</a></div>
+            ${inquiry.phone ? `<div><strong>Phone / WhatsApp:</strong> <span style="color: #09090b; font-weight: 600;">${escapeHtml(inquiry.phone)}</span></div>` : ''}
+            ${inquiry.service ? `<div><strong>Service Needed:</strong> <span style="color: #09090b;">${escapeHtml(inquiry.service)}</span></div>` : ''}
             ${inquiry.budget ? `<div><strong>Budget:</strong> ${escapeHtml(inquiry.budget)}</div>` : ''}
             ${inquiry.timeline ? `<div><strong>Timeline:</strong> ${escapeHtml(inquiry.timeline)}</div>` : ''}
-            ${inquiry.service ? `<div><strong>Service:</strong> ${escapeHtml(inquiry.service)}</div>` : ''}
           </div>
-          <div style="padding: 14px; background-color: #f4f4f5; border-radius: 6px; font-size: 15px; color: #18181b; white-space: pre-wrap;">${escapeHtml(inquiry.message)}</div>
-          <div style="margin-top: 16px; font-size: 13px; color: #71717a;">Time: ${nowFormatted} IST</div>
+          <div style="margin-bottom: 16px;">
+            <div style="font-size: 13px; font-weight: 700; color: #71717a; text-transform: uppercase; margin-bottom: 6px;">
+              Project Message:
+            </div>
+            <div style="padding: 14px 16px; background-color: #f4f4f5; border-radius: 6px; font-size: 15px; color: #18181b; line-height: 1.5; white-space: pre-wrap;">${escapeHtml(inquiry.message)}</div>
+          </div>
+          <div style="margin-top: 18px; padding-top: 14px; border-top: 1px solid #f4f4f5; font-size: 13px; color: #71717a;">Time: ${nowFormatted} IST</div>
         </div>
       </body>
       </html>

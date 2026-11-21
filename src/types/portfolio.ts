@@ -40,6 +40,7 @@ export interface ContactInquiry {
   name: string;
   email: string;
   message: string;
+  phone?: string;
   budget?: string;
   timeline?: string;
   service?: string;

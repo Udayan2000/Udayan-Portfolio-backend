@@ -13,6 +13,8 @@ export const contactInquirySchema = z.object({
     .email('Please enter a valid email address')
     .max(255, 'Email must be under 255 characters'),
 
+  phone: z.string().trim().max(50).optional(),
+
   message: z
     .string()
     .trim()

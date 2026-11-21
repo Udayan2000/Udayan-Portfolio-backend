@@ -99,5 +99,68 @@
     "lastActivity": "2026-11-20T19:25:06.381Z",
     "notificationCount": 0,
     "visitorPhone": "+91 89459 38993"
+  },
+  {
+    "sessionId": "test_sess_1",
+    "messages": [
+      {
+        "id": "msg_1795285132321_3i1n",
+        "role": "user",
+        "text": "Can you build a Next.js e-commerce store with Stripe?",
+        "timestamp": "2026-11-21T18:18:52.321Z"
+      },
+      {
+        "id": "msg_1795285133764_s1qj",
+        "role": "model",
+        "text": "Yes, absolutely! Udayan builds fast, high-converting e-commerce stores using Next.js and Stripe. Reach out to him at +91 89459 38993 or ghosh.udayan2000@gmail.com to discuss your store!",
+        "timestamp": "2026-11-21T18:18:53.764Z"
+      }
+    ],
+    "isHumanActive": false,
+    "createdAt": "2026-11-21T18:18:52.318Z",
+    "lastActivity": "2026-11-21T18:18:53.764Z",
+    "notificationCount": 0
+  },
+  {
+    "sessionId": "test_sess_2",
+    "messages": [
+      {
+        "id": "msg_1795285154556_x1de",
+        "role": "user",
+        "text": "How much does a full stack web app cost? What is your budget?",
+        "timestamp": "2026-11-21T18:19:14.556Z"
+      },
+      {
+        "id": "msg_1795285156251_bplv",
+        "role": "model",
+        "text": "Pricing",
+        "timestamp": "2026-11-21T18:19:16.251Z"
+      }
+    ],
+    "isHumanActive": false,
+    "createdAt": "2026-11-21T18:19:14.553Z",
+    "lastActivity": "2026-11-21T18:19:16.251Z",
+    "notificationCount": 0
+  },
+  {
+    "sessionId": "test_sess_3",
+    "messages": [
+      {
+        "id": "msg_1795285192486_xcpa",
+        "role": "user",
+        "text": "How much does a full stack web app cost? What is your budget?",
+        "timestamp": "2026-11-21T18:19:52.486Z"
+      },
+      {
+        "id": "msg_1795285195800_lg98",
+        "role": "model",
+        "text": "Pricing for a full-stack web app depends heavily on your specific project scope and features. Feel free to reach out to Udayan directly at +91 89459 38993 or ghosh.udayan2000@gmail.com for a tailored quote!",
+        "timestamp": "2026-11-21T18:19:55.800Z"
+      }
+    ],
+    "isHumanActive": false,
+    "createdAt": "2026-11-21T18:19:52.483Z",
+    "lastActivity": "2026-11-21T18:19:55.800Z",
+    "notificationCount": 0
   }
 ]
