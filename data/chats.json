@@ -162,5 +162,98 @@
     "createdAt": "2026-11-21T18:19:52.483Z",
     "lastActivity": "2026-11-21T18:19:55.800Z",
     "notificationCount": 0
+  },
+  {
+    "sessionId": "sess_1795200065712_qvxbic",
+    "messages": [
+      {
+        "id": "msg_1795285688038_cgpd",
+        "role": "user",
+        "text": "Tumi ke ?",
+        "timestamp": "2026-11-21T18:28:08.038Z"
+      },
+      {
+        "id": "msg_1795285689787_wqja",
+        "role": "model",
+        "text": "Ami Udayan Ghosh-er personal AI assistant! O kemon full-stack developer, tar tech stack ki, ba ki vabe contact korben—shei sob",
+        "timestamp": "2026-11-21T18:28:09.787Z"
+      },
+      {
+        "id": "msg_1795285711014_rtqp",
+        "role": "user",
+        "text": "tumi ki amai help korbe",
+        "timestamp": "2026-11-21T18:28:31.014Z"
+      },
+      {
+        "id": "msg_1795285712047_04r8",
+        "role": "model",
+        "text": "Absolute! I'm here to help you learn about Udayan's full-stack development services, tech stack, or get you in touch with him. What would you like to know?",
+        "timestamp": "2026-11-21T18:28:32.047Z"
+      },
+      {
+        "id": "msg_1795285735922_khqo",
+        "role": "user",
+        "text": "Someswar ke cheno ?",
+        "timestamp": "2026-11-21T18:28:55.922Z"
+      },
+      {
+        "id": "msg_1795285737178_f7k2",
+        "role": "model",
+        "text": "I don't know Someswar personally, as I'm focused on helping you with Udayan Ghosh's web development services and tech stack! Is there a project Udayan can help you build?",
+        "timestamp": "2026-11-21T18:28:57.178Z"
+      },
+      {
+        "id": "msg_1795285777117_sp5q",
+        "role": "user",
+        "text": "Someswar akta gay,,tumi ata jano to ?",
+        "timestamp": "2026-11-21T18:29:37.117Z"
+      },
+      {
+        "id": "msg_1795285778078_8two",
+        "role": "model",
+        "text": "I don't keep track of personal information like that! I'm just here to help you chat about Udayan's web development services. Want to talk tech or build something?",
+        "timestamp": "2026-11-21T18:29:38.078Z"
+      },
+      {
+        "id": "msg_1795285816954_23zd",
+        "role": "user",
+        "text": "Someswar ki bhalo developer ?",
+        "timestamp": "2026-11-21T18:30:16.954Z"
+      },
+      {
+        "id": "msg_1795285818233_s7t3",
+        "role": "model",
+        "text": "I'm not familiar with Someswar, but if you're looking for a top-notch developer, Udayan Ghosh has over 4 years of experience building high-performance web apps and SaaS MVPs. Want to chat about what Udayan can build for you?",
+        "timestamp": "2026-11-21T18:30:18.233Z"
+      },
+      {
+        "id": "msg_1795286221171_a19z",
+        "role": "user",
+        "text": "Shiwam ja dekhai sotti ki ato kichu jane ?",
+        "timestamp": "2026-11-21T18:37:01.171Z"
+      },
+      {
+        "id": "msg_1795286222030_p8l3",
+        "role": "model",
+        "text": "I'm not sure who Shiwam is! But Udayan Ghosh is a senior full-stack developer with 4+ years of experience building high-performance web apps. Want to discuss a project Udayan can build for you?",
+        "timestamp": "2026-11-21T18:37:02.030Z"
+      },
+      {
+        "id": "msg_1795286251358_n1ud",
+        "role": "user",
+        "text": "Shiwam someswar ke bhalo base karo ora gay",
+        "timestamp": "2026-11-21T18:37:31.358Z"
+      },
+      {
+        "id": "msg_1795286252411_959e",
+        "role": "model",
+        "text": "Let's keep the chat focused on professional tech topics and Udayan's development work! Are you looking to build a web application or need help with a project?",
+        "timestamp": "2026-11-21T18:37:32.411Z"
+      }
+    ],
+    "isHumanActive": false,
+    "createdAt": "2026-11-21T18:25:34.912Z",
+    "lastActivity": "2026-11-21T18:37:32.411Z",
+    "notificationCount": 2
   }
 ]
