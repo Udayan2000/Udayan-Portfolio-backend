@@ -1,0 +1,103 @@
+[
+  {
+    "sessionId": "test_session_1",
+    "visitorName": "Dr. Sharma",
+    "visitorEmail": "drsharma@example.com",
+    "messages": [
+      {
+        "id": "msg_1795199335612_d7lj",
+        "role": "user",
+        "text": "Hi Udayan! I need a fast WordPress site for my healthcare clinic. What is your turnaround time?",
+        "timestamp": "2026-11-20T18:28:55.612Z"
+      },
+      {
+        "id": "msg_1795199336646_n9bw",
+        "role": "model",
+        "text": "Thanks for reaching out! Udayan has been notified of your message on his phone. What kind of project are you looking to build, and do you have a target launch date in mind?",
+        "timestamp": "2026-11-20T18:28:56.646Z"
+      }
+    ],
+    "isHumanActive": false,
+    "createdAt": "2026-11-20T18:28:55.612Z",
+    "lastActivity": "2026-11-20T18:28:56.646Z",
+    "notificationCount": 1
+  },
+  {
+    "sessionId": "test_live_session",
+    "visitorName": "David Miller",
+    "visitorEmail": "david@acme.com",
+    "messages": [
+      {
+        "id": "msg_1795199909274_vnjn",
+        "role": "user",
+        "text": "Hi Udayan! Can you build an ecommerce store with Next.js and Stripe for my brand?",
+        "timestamp": "2026-11-20T18:38:29.274Z"
+      },
+      {
+        "id": "msg_1795199911014_3t1c",
+        "role": "model",
+        "text": "Hey there! Absolutely—Next.js and Stripe are actually some of Udayan's favorite tools for building lightning-fast, high-converting e-commerce storefronts. \n\nHe typically sets these up with slide-over carts, seamless checkout, and 98+ performance scores in about 2 to 3 weeks. What's your target timeline for getting this live?",
+        "timestamp": "2026-11-20T18:38:31.014Z"
+      }
+    ],
+    "isHumanActive": false,
+    "createdAt": "2026-11-20T18:38:29.274Z",
+    "lastActivity": "2026-11-20T18:38:31.014Z",
+    "notificationCount": 1
+  },
+  {
+    "sessionId": "test_high_level",
+    "visitorName": "Elena Rostova",
+    "visitorEmail": "elena@healthpulse.io",
+    "messages": [
+      {
+        "id": "msg_1795200624365_qyzg",
+        "role": "user",
+        "text": "We are a healthcare startup needing a patient booking portal with HIPAA compliant auth and WhatsApp reminders. Can Udayan build this?",
+        "timestamp": "2026-11-20T18:50:24.365Z"
+      },
+      {
+        "id": "msg_1795200638209_srxv",
+        "role": "model",
+        "text": "That's right in Udayan's wheelhouse — he builds secure React/Next.js portals paired with Node.js backends and encrypted database architectures for exact workflows like yours. He can easily wire up Twilio or ultra-reliable API layers for instant WhatsApp booking confirmations and reminders. \n\nAre you aiming to launch an MVP within the next 3 to 6 weeks, and do you already have UI/UX designs ready to go?",
+        "timestamp": "2026-11-20T18:50:38.209Z"
+      }
+    ],
+    "isHumanActive": false,
+    "createdAt": "2026-11-20T18:50:24.365Z",
+    "lastActivity": "2026-11-20T18:50:38.209Z",
+    "notificationCount": 1
+  },
+  {
+    "sessionId": "test_client_1795202618296",
+    "visitorEmail": "client.lead@gmail.com",
+    "messages": [
+      {
+        "id": "msg_1795202618298_wugj",
+        "role": "user",
+        "text": "Hi Udayan, I run a logistics startup and we need an MVP dashboard with real-time driver tracking and dispatching. What is your estimated timeline, stack, and cost? You can reach me at client.lead@gmail.com or +91 98765 43210.",
+        "timestamp": "2026-11-20T19:23:38.298Z"
+      },
+      {
+        "id": "msg_1795202620381_ukm7",
+        "role": "model",
+        "text": "Hey there! Thanks for reaching out. Building a real-time logistics dispatch and tracking dashboard is right in Udayan's wheelhouse—especially when it comes to handling live telemetry and low-latency updates without dragging down performance.\n\nHere is a quick breakdown of how Udayan approaches an MVP like this:\n\n*   **Estimated Timeline:** For a custom logistics MVP with real-time tracking, you're looking at **3 to 5 weeks** from kickoff to production deployment.\n*   **The Tech Stack:** \n    *   *Frontend:* Next.js 16 (React 19) + Tailwind CSS v4 for a lightning-fast, responsive operator dashboard.\n    *   *Real-time & Backend:* Node.js, WebSockets (or Supabase/Redis pub-sub channels) for live driver coordinate streaming, paired with Express and PostgreSQL + PostGIS for spatial data handling.\n    *   *Infrastructure:* Vercel & dedicated VPS/managed DB nodes, ensuring sub-100ms API response times.\n*   **Estimated Investment:** A custom application of this scope typically ranges between **$5,000 – $9,000**, structured cleanly across milestone deliverables. You also get full GitHub repo ownership, zero vendor lock-in, and 30 days of post-launch warranty.\n\nThanks for leaving your contact details (`client.lead@gmail.com` and phone number). Udayan has received an instant notification and will reach out to you directly shortly to chat through your exact dispatch workflows and map providers (Mapbox, Google Maps, etc.). \n\nIs there any specific fleet size or mobile app requirement for the drivers we should factor into the initial chat?",
+        "timestamp": "2026-11-20T19:23:40.381Z"
+      }
+    ],
+    "isHumanActive": false,
+    "createdAt": "2026-11-20T19:23:38.296Z",
+    "lastActivity": "2026-11-20T19:23:40.381Z",
+    "notificationCount": 0
+  },
+  {
+    "sessionId": "test_contact_check_1795202706381",
+    "visitorEmail": "udayan.work@gmail.com",
+    "messages": [],
+    "isHumanActive": false,
+    "createdAt": "2026-11-20T19:25:06.381Z",
+    "lastActivity": "2026-11-20T19:25:06.381Z",
+    "notificationCount": 0,
+    "visitorPhone": "+91 89459 38993"
+  }
+]
