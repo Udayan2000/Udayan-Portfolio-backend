@@ -45,17 +45,95 @@ class EmailService {
         });
         logger.info('SMTP email transporter initialized successfully.');
       } catch (error) {
-        logger.warn('Failed to initialize SMTP transporter. Falling back to console logging.', error);
+        logger.warn('Failed to initialize SMTP transporter:', error);
         this.transporter = null;
       }
     } else {
-      logger.info('SMTP credentials not configured. Inquiries will be logged to console.');
+      logger.warn(
+        '⚠️ SMTP credentials not found in environment variables. If you have not set up RESEND_API_KEY or SMTP_USER/SMTP_PASS, emails cannot be sent.'
+      );
     }
   }
 
   /**
-   * Dispatched dynamically whenever anyone messages on the website.
-   * Minimal, clean, 100% dynamic content: "A client just reached out to you!"
+   * Internal dispatcher: attempts Resend HTTPS API first (best for cloud hosting),
+   * falls back to SMTP with diagnostic error reporting.
+   */
+  private async dispatchEmail(options: {
+    subject: string;
+    text: string;
+    html: string;
+    replyTo?: string;
+  }): Promise<boolean> {
+    // 1. Priority 1: Resend Transactional HTTPS API (never blocked by cloud firewalls or Google IP filters)
+    if (env.RESEND_API_KEY) {
+      try {
+        const response = await fetch('https://api.resend.com/emails', {
+          method: 'POST',
+          headers: {
+            Authorization: `Bearer ${env.RESEND_API_KEY}`,
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify({
+            from: 'Portfolio Alerts <onboarding@resend.dev>',
+            to: [env.CONTACT_RECEIVER_EMAIL],
+            reply_to: options.replyTo,
+            subject: options.subject,
+            text: options.text,
+            html: options.html,
+          }),
+        });
+
+        if (response.ok) {
+          logger.success(`Email delivered successfully via Resend API to: ${env.CONTACT_RECEIVER_EMAIL}`);
+          return true;
+        }
+
+        const errText = await response.text();
+        logger.error('Resend API dispatch failed:', errText);
+      } catch (resendErr) {
+        logger.error('Failed to communicate with Resend HTTPS API:', resendErr);
+      }
+    }
+
+    // 2. Priority 2: Direct SMTP (Gmail)
+    if (this.transporter && env.SMTP_USER && env.SMTP_PASS) {
+      try {
+        await Promise.race([
+          this.transporter.sendMail({
+            from: `"Portfolio Alerts" <${env.SMTP_USER}>`,
+            to: env.CONTACT_RECEIVER_EMAIL,
+            replyTo: options.replyTo || env.SMTP_USER,
+            subject: options.subject,
+            text: options.text,
+            html: options.html,
+          }),
+          new Promise((_, reject) =>
+            setTimeout(() => reject(new Error('SMTP send timed out after 10 seconds. Your cloud host may be blocking outbound SMTP ports 587/465.')), 10000)
+          ),
+        ]);
+
+        logger.success(`Email delivered successfully via SMTP to: ${env.CONTACT_RECEIVER_EMAIL}`);
+        return true;
+      } catch (smtpErr: any) {
+        logger.error('SMTP email dispatch error:', smtpErr?.message || smtpErr);
+        if (smtpErr?.code === 'EAUTH' || smtpErr?.responseCode === 535) {
+          logger.error('⚠️ Gmail Authentication Failed: Check your 16-character Gmail App Password.');
+        } else if (smtpErr?.code === 'ETIMEDOUT' || smtpErr?.code === 'ECONNREFUSED') {
+          logger.error('⚠️ Cloud Firewall Blocking SMTP: Cloud hosts (Render/AWS/DO) frequently block ports 587 & 465. Use RESEND_API_KEY for guaranteed HTTPS delivery.');
+        }
+        return false;
+      }
+    }
+
+    // If neither provider is configured:
+    logger.warn('⚠️ [EMAIL NOT SENT] Neither RESEND_API_KEY nor valid SMTP credentials found in environment variables.');
+    logger.warn(`Inquiry Details: Subject="${options.subject}", ReplyTo="${options.replyTo}"`);
+    return false;
+  }
+
+  /**
+   * Dispatched dynamically when a visitor chats on the website.
    */
   async sendChatLeadAlert(data: ChatLeadEmailData): Promise<boolean> {
     const hasClientEmail = Boolean(
@@ -133,30 +211,12 @@ Session: ${data.sessionId}`;
       </html>
     `;
 
-    if (!this.transporter) {
-      logger.info('================ [CLIENT REACHED OUT] ================');
-      logger.info(`Message: ${data.latestUserMessage}`);
-      logger.info(`AI Reply: ${data.aiReply || 'N/A'}`);
-      logger.info(`Email: ${data.clientEmail || 'N/A'} | Phone: ${data.clientPhone || 'N/A'}`);
-      logger.info('======================================================');
-      return true;
-    }
-
-    try {
-      await this.transporter.sendMail({
-        from: `"Portfolio Alerts" <${env.SMTP_USER}>`,
-        to: env.CONTACT_RECEIVER_EMAIL,
-        replyTo: hasClientEmail ? data.clientEmail : env.SMTP_USER,
-        subject,
-        text: plainText,
-        html: htmlContent,
-      });
-      logger.success(`Notification sent: "A client just reached out to you!" -> ${env.CONTACT_RECEIVER_EMAIL}`);
-      return true;
-    } catch (error) {
-      logger.error('Failed to send email notification:', error);
-      return false;
-    }
+    return this.dispatchEmail({
+      subject,
+      text: plainText,
+      html: htmlContent,
+      replyTo: hasClientEmail ? data.clientEmail : undefined,
+    });
   }
 
   /**
@@ -185,7 +245,7 @@ Time: ${nowFormatted} IST`;
       <!DOCTYPE html>
       <html>
       <body style="font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; background-color: #fafafa; padding: 20px; color: #18181b;">
-        <div style="max-width: 540px; margin: 0 auto; background: #ffffff; border: 1px solid #e4e4e7; border-radius: 8px; padding: 24px;">
+        <div style="max-width: 540px; margin: 0 auto; background-color: #ffffff; border: 1px solid #e4e4e7; border-radius: 8px; padding: 24px;">
           <h2 style="margin: 0 0 16px 0; color: #09090b; font-size: 20px; font-weight: 700; border-bottom: 2px solid #06b6d4; padding-bottom: 12px;">
             A client just reached out to you!
           </h2>
@@ -209,29 +269,12 @@ Time: ${nowFormatted} IST`;
       </html>
     `;
 
-    if (!this.transporter) {
-      logger.info('================ [CONTACT INQUIRY] ================');
-      logger.info(`From: ${inquiry.name} <${inquiry.email}>`);
-      logger.info(`Message: ${inquiry.message}`);
-      logger.info('====================================================');
-      return true;
-    }
-
-    try {
-      await this.transporter.sendMail({
-        from: `"Portfolio Alerts" <${env.SMTP_USER}>`,
-        to: env.CONTACT_RECEIVER_EMAIL,
-        replyTo: inquiry.email,
-        subject,
-        text: plainText,
-        html: htmlContent,
-      });
-      logger.success(`Contact notification sent: "A client just reached out to you!" -> ${env.CONTACT_RECEIVER_EMAIL}`);
-      return true;
-    } catch (error) {
-      logger.error('Failed to send contact notification:', error);
-      return false;
-    }
+    return this.dispatchEmail({
+      subject,
+      text: plainText,
+      html: htmlContent,
+      replyTo: inquiry.email,
+    });
   }
 }
 

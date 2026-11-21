@@ -17,6 +17,9 @@ const envSchema = z.object({
   GEMINI_API_KEY: z.string().default(''),
   GEMINI_MODEL: z.string().default('gemini-3.5-flash-lite'),
 
+  // Transactional Email API (Resend - Recommended for Cloud Production)
+  RESEND_API_KEY: z.string().optional(),
+
   // SMTP Email
   SMTP_HOST: z.string().optional(),
   SMTP_PORT: z.string().default('587').transform((val) => parseInt(val, 10)),
