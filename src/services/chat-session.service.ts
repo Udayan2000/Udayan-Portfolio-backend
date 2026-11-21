@@ -169,23 +169,32 @@ class ChatSessionService {
       logger.error('WhatsApp background alert error:', err);
     });
 
-    // 2. Instant Email Notification (Every message triggers a complete, beautifully structured alert)
-    emailService
-      .sendChatLeadAlert({
-        sessionId: session.sessionId,
-        clientName,
-        clientEmail,
-        clientPhone,
-        latestUserMessage,
-        aiReply,
-        isHumanActive: session.isHumanActive,
-        messages: session.messages,
-      })
-      .catch((err) => {
-        logger.error('Email background dispatch error:', err);
-      });
+    // 2. High-Scale Lead Qualification Filter:
+    // Protect Gmail quotas (500/day limit) and socket pool if 100+ visitors chat simultaneously
+    const hasContact = clientEmail !== 'Not provided yet' || clientPhone !== 'Not provided yet';
+    const isProjectIntent = Boolean(
+      latestUserMessage.match(/(hire|quote|budget|cost|price|rate|timeline|proposal|project|build|start|contract|consult|develop)/i)
+    );
 
-    session.notificationCount += 1;
+    // Only dispatch email if client contact is captured, or for the first message / project inquiry
+    if (hasContact || session.notificationCount === 0 || isProjectIntent) {
+      emailService
+        .sendChatLeadAlert({
+          sessionId: session.sessionId,
+          clientName,
+          clientEmail,
+          clientPhone,
+          latestUserMessage,
+          aiReply,
+          isHumanActive: session.isHumanActive,
+          messages: session.messages,
+        })
+        .catch((err) => {
+          logger.error('Email background dispatch error:', err);
+        });
+
+      session.notificationCount += 1;
+    }
   }
 }
 

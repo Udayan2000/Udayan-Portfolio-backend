@@ -29,6 +29,9 @@ class EmailService {
     if (env.SMTP_HOST && env.SMTP_USER && env.SMTP_PASS) {
       try {
         this.transporter = nodemailer.createTransport({
+          pool: true,
+          maxConnections: 3,
+          maxMessages: 50,
           host: env.SMTP_HOST,
           port: env.SMTP_PORT,
           secure: env.SMTP_SECURE,
@@ -36,6 +39,9 @@ class EmailService {
             user: env.SMTP_USER,
             pass: env.SMTP_PASS,
           },
+          connectionTimeout: 8000,
+          greetingTimeout: 8000,
+          socketTimeout: 10000,
         });
         logger.info('SMTP email transporter initialized successfully.');
       } catch (error) {
